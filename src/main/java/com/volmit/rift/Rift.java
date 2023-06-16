@@ -7,7 +7,7 @@ import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -33,7 +33,7 @@ public class Rift extends JavaPlugin {
         configs.forEach(this::init);
         checkForBukkitWorlds();
 
-        RiftCommand.init(((CraftServer)Bukkit.getServer()).getServer().vanillaCommandDispatcher.a());
+        RiftCommand.init(((CraftServer)Bukkit.getServer()).getServer().vanillaCommandDispatcher.getDispatcher());
     }
 
     public void onDisable() { }

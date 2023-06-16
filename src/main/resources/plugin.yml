@@ -1,11 +1,7 @@
-name: ${name}
+name: Rift
 version: ${version}
-main: ${main}
+main: com.volmit.rift.Rift
 authors: [ cyberpwn, NextdoorPsycho, Vatuu ]
 website: volmit.com
 api-version: ${apiversion}
 description: The most reliable world manager
-libraries:
-  - com.google.code.gson:gson:2.9.0
-
-hotload-dependencies: false
