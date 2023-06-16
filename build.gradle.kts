@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.volmit.rift"
-version = "2.0.3"
+version = "2.0.4"
 val apiVersion = "1.20"
 
 repositories {
