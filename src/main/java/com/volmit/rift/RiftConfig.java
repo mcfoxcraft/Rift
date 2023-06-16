@@ -1,14 +1,13 @@
 package com.volmit.rift;
 
 import com.google.gson.Gson;
-import lombok.Data;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
 public class RiftConfig {
 
     private static RiftConfig instance;
@@ -37,6 +36,8 @@ public class RiftConfig {
             e.printStackTrace();
         }
 
+        instance = config;
+
         return config;
     }
 
@@ -47,5 +48,46 @@ public class RiftConfig {
             Rift.error("Failed to save Rift Config!", e);
             e.printStackTrace();
         }
+    }
+
+    public boolean isVerbose() {
+        return this.verbose;
+    }
+
+    public Set<String> getDeleting() {
+        return this.deleting;
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof RiftConfig other)) {
+            return false;
+        }
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        if (this.verbose != other.verbose) {
+            return false;
+        }
+
+        return Objects.equals(this.deleting, other.deleting);
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof RiftConfig;
+    }
+
+    public int hashCode() {
+        int result = 1;
+        result = result * 59 + (this.isVerbose() ? 79 : 97);
+        Set<String> $deleting = this.getDeleting();
+        result = result * 59 + ($deleting == null ? 43 : ((Object)$deleting).hashCode());
+        return result;
+    }
+
+    public String toString() {
+        return "RiftConfig(verbose=" + this.isVerbose() + ", deleting=" + this.getDeleting() + ")";
     }
 }

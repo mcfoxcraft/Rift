@@ -1,6 +1,5 @@
 plugins {
     id("java")
-    id("io.freefair.lombok") version "5.2.1"
     id("io.papermc.paperweight.userdev") version "1.5.2"
     id("xyz.jpenilla.run-paper") version "2.0.1"
 }
@@ -17,8 +16,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.24")
-    annotationProcessor("org.projectlombok:lombok:1.18.24")
     paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
 }
 

@@ -1,6 +1,5 @@
 package com.volmit.rift;
 
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
@@ -19,7 +18,7 @@ public class Rift extends JavaPlugin {
 
     public static Rift INSTANCE;
 
-    @Getter private List<RiftWorldConfig> configs;
+    private List<RiftWorldConfig> configs;
 
     public void onEnable() {
         INSTANCE = this;
@@ -41,7 +40,7 @@ public class Rift extends JavaPlugin {
     private void init(RiftWorldConfig c) {
         File f = new File(c.getName());
         String generator = c.getGenerator();
-        Bukkit.getWorlds().stream().filter(w -> !w.getWorldFolder().equals(f)).forEach(w -> WorldCreator.name(f.getName()).generator(generator)
+        Bukkit.getWorlds().stream().filter(w -> !w.getWorldFolder().equals(f)).forEach(w -> WorldCreator.name(f.getName()).generator(!generator.equals("normal") ? generator : null)
                 .type(generator.equalsIgnoreCase("flat") ? WorldType.FLAT : generator.equalsIgnoreCase("amplified") ? WorldType.AMPLIFIED : generator.equalsIgnoreCase("largebiomes") ? WorldType.LARGE_BIOMES : WorldType.NORMAL)
                 .createWorld());
     }
@@ -72,7 +71,7 @@ public class Rift extends JavaPlugin {
 
                 info("Loading world \"" + worldName + "\" from bukkit.yml using generator \"" + generator + "\"...");
                 new WorldCreator(worldName)
-                        .generator(generator)
+                        .generator(generator != null && !generator.equals("normal") ? generator : null)
                         .type(generator != null ? generator.equalsIgnoreCase("flat") ? WorldType.FLAT : generator.equalsIgnoreCase("amplified") ? WorldType.AMPLIFIED : generator.equalsIgnoreCase("largebiomes") ? WorldType.LARGE_BIOMES : WorldType.NORMAL : WorldType.NORMAL)
                         .createWorld();
                 info("Successfully loaded world \"" + worldName + "\" from bukkit.yml!");
@@ -81,6 +80,10 @@ public class Rift extends JavaPlugin {
             error("Failed to load bukkit.yml worlds!", e);
             e.printStackTrace();
         }
+    }
+
+    public List<RiftWorldConfig> getConfigs() {
+        return configs;
     }
 
     public static void info(String message) {

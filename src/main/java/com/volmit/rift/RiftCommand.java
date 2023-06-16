@@ -119,7 +119,7 @@ public class RiftCommand {
         sender.sendMessage(TAG + ChatColor.GREEN + "Creating new World \"" + file + "\"...");
         WorldCreator w = WorldCreator.name(f.getName())
                 .type(generator.equalsIgnoreCase("flat") ? WorldType.FLAT : generator.equalsIgnoreCase("amplified") ? WorldType.AMPLIFIED : generator.equalsIgnoreCase("largebiomes") ? WorldType.LARGE_BIOMES : WorldType.NORMAL)
-                .generator(generator);
+                .generator(!generator.equals("normal") ? generator : null);
 
         if(seed != Long.MAX_VALUE)
             w.seed(seed);
@@ -152,7 +152,7 @@ public class RiftCommand {
         sender.sendMessage(TAG + ChatColor.GREEN + "Loading World \"" + file + "\"...");
         WorldCreator.name(f.getName())
                 .type(generator.equalsIgnoreCase("flat") ? WorldType.FLAT : generator.equalsIgnoreCase("amplified") ? WorldType.AMPLIFIED : generator.equalsIgnoreCase("largebiomes") ? WorldType.LARGE_BIOMES : WorldType.NORMAL)
-                .generator(generator).createWorld();
+                .generator(!generator.equals("normal") ? generator : null).createWorld();
         sender.sendMessage(TAG + ChatColor.GREEN + "Successfully loaded World \"" + file + "\".");
         return 1;
     }
@@ -179,7 +179,7 @@ public class RiftCommand {
         sender.sendMessage(TAG + ChatColor.GREEN + "Importing World \"" + f.getName() + "\"...");
         World world = WorldCreator.name(f.getName())
                 .type(generator.equalsIgnoreCase("flat") ? WorldType.FLAT : generator.equalsIgnoreCase("amplified") ? WorldType.AMPLIFIED : generator.equalsIgnoreCase("largebiomes") ? WorldType.LARGE_BIOMES : WorldType.NORMAL)
-                .generator(generator).createWorld();
+                .generator(!generator.equals("normal") ? generator : null).createWorld();
         RiftWorldConfig c = RiftWorldConfig.from(world, generator);
         Rift.INSTANCE.getConfigs().add(c);
         c.save();
