@@ -1,7 +1,7 @@
 name: Rift
-version: ${version}
+version: "${version}"
 main: com.volmit.rift.Rift
 authors: [ cyberpwn, NextdoorPsycho, Vatuu ]
 website: volmit.com
-api-version: ${apiversion}
+api-version: "${apiversion}"
 description: The most reliable world manager
