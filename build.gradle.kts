@@ -1,11 +1,11 @@
 plugins {
     id("java")
-    id("io.papermc.paperweight.userdev") version "1.5.2"
+    id("io.papermc.paperweight.userdev") version "1.5.11"
     id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
 group = "com.volmit.rift"
-version = "2.0.5"
+version = "2.0.6"
 val apiVersion = "1.20"
 
 repositories {
@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.20.2-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
 }
 
 tasks {
@@ -34,7 +34,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.20.2")
+        minecraftVersion("1.20.4")
     }
 }
 
