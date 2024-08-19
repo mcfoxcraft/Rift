@@ -1,12 +1,12 @@
 plugins {
     id("java")
-    id("io.papermc.paperweight.userdev") version "1.5.11"
+    id("io.papermc.paperweight.userdev") version "1.7.2"
     id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
 group = "com.volmit.rift"
-version = "2.0.6"
-val apiVersion = "1.20"
+version = "2.0.7"
+val apiVersion = "1.21"
 
 repositories {
     maven("https://maven.fabricmc.net/")
@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
 }
 
 tasks {
@@ -34,10 +34,10 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.20.4")
+        minecraftVersion("1.21.1")
     }
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }

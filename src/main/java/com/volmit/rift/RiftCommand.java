@@ -1,14 +1,13 @@
 package com.volmit.rift;
 
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.tree.CommandNode;
-import net.minecraft.commands.CommandSourceStack;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -20,6 +19,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
@@ -39,13 +39,13 @@ public class RiftCommand {
     private static final String CMD_LIST = "list";
     private static final String CMD_GENS = "generators";
 
-    public static void init(CommandDispatcher<CommandSourceStack> dispatcher) {
-        CommandNode<CommandSourceStack> node = dispatcher.register(literal(CMD)
-                .then(literal(CMD_TO).requires(src -> src.getBukkitSender().hasPermission("rift.teleport"))
+    public static void init(Commands dispatcher) {
+        dispatcher.register(Commands.literal(CMD)
+                .then(literal(CMD_TO).requires(src -> src.getSender().hasPermission("rift.teleport"))
                   .then(argument("name", StringArgumentType.string())
                     .executes(ctx -> teleport(ctx, StringArgumentType.getString(ctx, "name")))))
-                .requires(src -> src.getBukkitSender().hasPermission("rift.admin"))
-                .executes(ctx -> printUsage(ctx.getSource().getBukkitSender()))
+                .requires(src -> src.getSender().hasPermission("rift.admin"))
+                .executes(ctx -> printUsage(ctx.getSource().getSender()))
                 .then(literal(CMD_CREATE)
                   .then(argument("name", StringArgumentType.string())
                     .then(argument("generator", StringArgumentType.string())
@@ -87,11 +87,7 @@ public class RiftCommand {
                 .then(literal(CMD_LIST)
                   .executes(RiftCommand::list))
                 .then(literal(CMD_GENS)
-                  .executes(RiftCommand::generators)));
-
-        dispatcher.register(literal("rft").redirect(node));
-        dispatcher.register(literal("ri").redirect(node));
-        dispatcher.register(literal("rt").redirect(node));
+                  .executes(RiftCommand::generators)).build(), "Main Rift command", List.of("rft", "ri", "rt"));
     }
 
     private static int printUsage(CommandSender sender) {
@@ -109,7 +105,7 @@ public class RiftCommand {
     }
 
     private static int create(CommandContext<CommandSourceStack> ctx, String file, String generator, long seed, String environment) {
-        CommandSender sender = ctx.getSource().getBukkitSender();
+        CommandSender sender = ctx.getSource().getSender();
         File f = new File(file);
 
         if(f.exists()) {
@@ -135,7 +131,7 @@ public class RiftCommand {
     }
 
     private static int load(CommandContext<CommandSourceStack> ctx, String file, String generator) {
-        CommandSender sender = ctx.getSource().getBukkitSender();
+        CommandSender sender = ctx.getSource().getSender();
         File f = new File(file);
 
         if(Bukkit.getWorlds().stream().anyMatch(w -> w.getWorldFolder().equals(f))) {
@@ -158,7 +154,7 @@ public class RiftCommand {
     }
 
     private static int importWorld(CommandContext<CommandSourceStack> ctx, String file, String generator) {
-        CommandSender sender = ctx.getSource().getBukkitSender();
+        CommandSender sender = ctx.getSource().getSender();
         File f = new File(file);
 
         if(!f.exists()) {
@@ -188,7 +184,7 @@ public class RiftCommand {
     }
 
     private static int unload(CommandContext<CommandSourceStack> ctx, String file) {
-        CommandSender sender = ctx.getSource().getBukkitSender();
+        CommandSender sender = ctx.getSource().getSender();
         World w = Bukkit.getWorld(file);
 
         if(w == null) {
@@ -207,7 +203,7 @@ public class RiftCommand {
     }
 
     private static int delete(CommandContext<CommandSourceStack> ctx, String file) {
-        CommandSender sender = ctx.getSource().getBukkitSender();
+        CommandSender sender = ctx.getSource().getSender();
         World w = Bukkit.getWorld(file);
 
         sender.sendMessage(TAG + ChatColor.GREEN + "Deleting World \"" + file + "\"...");
@@ -222,16 +218,16 @@ public class RiftCommand {
     }
 
     private static int teleport(CommandContext<CommandSourceStack> ctx, String world) {
-        if(ctx.getSource().getBukkitSender() instanceof Player p) {
+        if(ctx.getSource().getSender() instanceof Player p) {
             try { p.teleport(Bukkit.getWorld(world).getSpawnLocation()); }
             catch(Throwable e) { p.sendMessage(TAG + ChatColor.RED + "Unable to find world \"" + world + "\"."); }
         } else
-            ctx.getSource().getBukkitSender().sendMessage(TAG + ChatColor.RED + "Only players can be moved into a world.");
+            ctx.getSource().getSender().sendMessage(TAG + ChatColor.RED + "Only players can be moved into a world.");
         return 1;
     }
 
     private static int list(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getBukkitSender();
+        CommandSender sender = ctx.getSource().getSender();
         for(World w : Bukkit.getWorlds()) {
             if(Rift.INSTANCE.getConfigs().stream().anyMatch(c -> c.getName().equals(w.getName()))) {
                 sender.sendMessage(ChatColor.GRAY + "- " + ChatColor.LIGHT_PURPLE + w.getName() + " | " + ChatColor.GREEN + "Managed");
@@ -260,7 +256,7 @@ public class RiftCommand {
     }
 
     private static int generators(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getBukkitSender();
+        CommandSender sender = ctx.getSource().getSender();
 
         for(WorldType t : WorldType.values())
             sender.sendMessage(ChatColor.GRAY + "- " + ChatColor.WHITE + t.getName().toLowerCase() + ChatColor.GRAY + " by " + ChatColor.RED + "Mojang");
@@ -275,8 +271,8 @@ public class RiftCommand {
         return 1;
     }
 
-    private static LiteralArgumentBuilder<CommandSourceStack> literal(String s) {
-        return LiteralArgumentBuilder.literal(s);
+    private static @NotNull LiteralArgumentBuilder<CommandSourceStack> literal(String s) {
+        return Commands.literal(s);
     }
 
     private static <T> RequiredArgumentBuilder<CommandSourceStack, T> argument(String s, ArgumentType<T> argumentType) {

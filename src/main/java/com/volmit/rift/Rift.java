@@ -1,12 +1,15 @@
 package com.volmit.rift;
 
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -32,7 +35,11 @@ public class Rift extends JavaPlugin {
         configs.forEach(this::init);
         checkForBukkitWorlds();
 
-        RiftCommand.init(((CraftServer)Bukkit.getServer()).getServer().vanillaCommandDispatcher.getDispatcher());
+        LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
+        manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            final Commands commands = event.registrar();
+            RiftCommand.init(commands);
+        });
     }
 
     public void onDisable() { }
